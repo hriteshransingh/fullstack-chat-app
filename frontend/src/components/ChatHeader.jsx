@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
+  const { selectedUser, setSelectedUser, isUserTyping } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
   return (
@@ -13,21 +13,30 @@ const ChatHeader = () => {
           {/* Avatar */}
           <div className="avatar">
             <div className="size-10 rounded-full relative">
-              <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName} />
+              <img
+                src={selectedUser.profilePic || "/avatar.png"}
+                alt={selectedUser.fullName}
+              />
             </div>
           </div>
 
           {/* User info */}
           <div>
             <h3 className="font-medium">{selectedUser.fullName}</h3>
-            <p className="text-sm text-base-content/70">
-              {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}
-            </p>
+            <div className="text-sm text-base-content/70">
+              {isUserTyping ? (
+                <p className="text-gray-500 text-sm">typing...</p>
+              ) : onlineUsers.includes(selectedUser._id) ? (
+                "Online"
+              ) : (
+                "Offline"
+              )}
+            </div>
           </div>
         </div>
 
         {/* Close button */}
-        <button onClick={() => setSelectedUser(null)} className= "ml-auto" >
+        <button onClick={() => setSelectedUser(null)} className="ml-auto">
           <X />
         </button>
       </div>

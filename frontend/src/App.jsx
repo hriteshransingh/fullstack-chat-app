@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Navbar from "./components/Navbar.jsx";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -8,19 +8,21 @@ import SettingsPage from "./pages/SettingsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import { useAuthStore } from "./store/useAuthStore.js";
 import { Loader } from "lucide-react";
-import {Toaster} from "react-hot-toast";  
-import {useThemeStore} from "./store/useThemeStore.js";
+import { Toaster } from "react-hot-toast";
+import { useThemeStore } from "./store/useThemeStore.js";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
 
- const {theme} =  useThemeStore();
+  const { theme } = useThemeStore();
+  const location = useLocation();
 
- console.log({onlineUsers});
+  console.log({ onlineUsers });
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
   console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
@@ -30,9 +32,13 @@ const App = () => {
       </div>
     );
 
+     // Paths where Navbar should be hidden
+  const hideNavbarRoutes = ["/login", "/signup"];
+  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
+
   return (
     <div data-theme={theme}>
-      <Navbar />
+      {shouldShowNavbar && <Navbar />}
       <Routes>
         <Route
           path="/"

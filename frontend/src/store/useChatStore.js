@@ -9,6 +9,16 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+  isUserTyping: false,
+
+  setUserTyping: ()=>{
+    
+    set({isUserTyping: true});
+  },
+
+  setUserStoppedTyping: ()=> {
+    set({isUserTyping: false});
+  },
 
   getUsers: async () => {
     set({ isUsersLoading: true });
