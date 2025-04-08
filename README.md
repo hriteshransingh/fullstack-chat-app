@@ -38,16 +38,16 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 NODE_ENV=development
 ```
 
-```
-## ⚙️ Build the App
 
+## ⚙️ Build the App
+```
 npm run build
 
 ```
-```
+
 
 ## 🚀 Start the App
-
+```
 npm start
 
 ```
