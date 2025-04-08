@@ -44,10 +44,13 @@ NODE_ENV=development
 npm run build
 
 ```
+```
 
 ## 🚀 Start the App
 
 npm start
+
+```
 
 
 
