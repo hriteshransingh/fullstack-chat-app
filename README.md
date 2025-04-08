@@ -38,5 +38,13 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 NODE_ENV=development
 
 
+## ⚙️ Build the App
+
+To prepare the app for production, run the following command:
+
+```bash
+npm run build
+
+
 
 
