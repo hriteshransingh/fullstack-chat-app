@@ -1,3 +1,8 @@
+# 💬 YoChatt - Real-Time Chat Application  
+
+
+A feature-rich real-time chat app with multiple themes, typing indicators, and responsive design. Built with modern web technologies for seamless communication.
+
 ## 🚀 Tech Stack & Features
 
 ### 🌟 Tech Stack
