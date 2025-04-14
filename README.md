@@ -1,25 +1,32 @@
-🚀 Tech Stack & Features
-🌟 Tech Stack
-• MERN (MongoDB, Express.js, React, Node.js)
-• Socket.io for real-time communication
-• TailwindCSS + DaisyUI for modern UI
-• Zustand for global state management
+## 🚀 Tech Stack & Features
 
-🔐 Authentication & Authorization
-• JWT-based authentication
-• Role-based access control and protected routes
+### 🌟 Tech Stack
+- **MERN Stack**  
+  - MongoDB  
+  - Express.js  
+  - React  
+  - Node.js  
+- **Socket.io** for real-time communication  
+- **TailwindCSS + DaisyUI** for modern UI  
+- **Zustand** for global state management  
 
-💬 Real-Time Features
-• Real-time messaging with Socket.io
-• Online user status updates
-• Typing indicator for active conversations 
+### 🔐 Authentication & Authorization  
+- JWT-based authentication  
+- Role-based access control  
+- Protected routes  
 
-🐞 Error Handling
-• Proper error handling on both server and client
-• User-friendly validation and feedback
+### 💬 Real-Time Features  
+- Real-time messaging with Socket.io  
+- Online user status updates  
+- Typing indicator for active conversations  
 
-🌐 Deployment
-• Fully deployed and production-ready
+### 🐞 Error Handling  
+- Comprehensive error handling on server and client  
+- User-friendly validation and feedback  
+
+### 🌐 Deployment  
+- Fully deployed and production-ready  
+
 
 
 ## 🛠️ Setup .env file
