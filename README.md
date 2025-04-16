@@ -1,5 +1,5 @@
+Copy
 # 💬 YoChatt - Real-Time Chat Application  
-
 
 A feature-rich real-time chat app with multiple themes, typing indicators, and responsive design. Built with modern web technologies for seamless communication.
 
@@ -13,7 +13,7 @@ A feature-rich real-time chat app with multiple themes, typing indicators, and r
   - Node.js  
 - **Socket.io** for real-time communication  
 - **TailwindCSS + DaisyUI** for modern UI  
-- **Zustand** for global state management  
+- **Zustand** for lightweight and efficient global state management  
 
 ### 🔐 Authentication & Authorization  
 - JWT-based authentication  
@@ -21,11 +21,18 @@ A feature-rich real-time chat app with multiple themes, typing indicators, and r
 - Protected routes  
 
 ### 💬 Real-Time Features  
-- Real-time messaging with Socket.io  
-- Online user status updates  
-- Typing indicator for active conversations  
+- Instant messaging with Socket.io  
+- Real-time online user status tracking  
+- Typing indicators for active conversations  
+- Image uploads and real-time previews  
 
-### 🐞 Error Handling  
+
+### 🖼️ Media Handling  
+- Cloudinary integration for secure image storage  
+- Real-time photo sharing with preview  
+- Optimized media loading  
+
+### � Error Handling  
 - Comprehensive error handling on server and client  
 - User-friendly validation and feedback  
 
