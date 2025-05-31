@@ -11,38 +11,28 @@ const MessageInput = () => {
   const {
     sendMessage,
     selectedUser,
-    messages,
     setUserTyping,
     setUserStoppedTyping,
   } = useChatStore();
+  const { authUser } = useAuthStore();
   const typingTimeOutRef = useRef(null);
 
   const socket = useAuthStore.getState().socket;
-  const senderId = messages[messages.length - 1]?.senderId || null;
-  const receiverId = messages[messages.length - 1]?.receiverId || null;
-  const chatId = [senderId, receiverId].sort().join("_");
 
   useEffect(() => {
-    if (chatId) {
-      console.log("joining chat room:", chatId);
-      socket.emit("joinChat", chatId);
-    }
-  }, [chatId]);
-
-  useEffect(() => {
-    socket.on("userTyping", (user) => {
-      setUserTyping();
+    socket.on("userTyping", ({ senderId }) => {
+      setUserTyping(senderId);
     });
 
-    socket.on("userStoppedTyping", () => {
-      setUserStoppedTyping();
+    socket.on("userStoppedTyping", ({ senderId }) => {
+      setUserStoppedTyping(senderId);
     });
 
     return () => {
       socket.off("userTyping");
       socket.off("userStoppedTyping");
     };
-  }, [socket, senderId]);
+  }, [socket]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -66,7 +56,6 @@ const MessageInput = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    console.log(selectedUser);
 
     if (!text.trim() && !imagePreview) return;
     try {
@@ -114,17 +103,23 @@ const MessageInput = () => {
             placeholder="Type a message..."
             value={text}
             onChange={(e) => {
-              setText(e.target.value);              
+              setText(e.target.value);
+
+              if (!authUser || !selectedUser) return;
+
               socket.emit("typing", {
-                chatId: chatId,
-                user: senderId,
+                senderId: authUser._id,
+                receiverId: selectedUser._id,
               });
 
               if (typingTimeOutRef.current)
                 clearTimeout(typingTimeOutRef.current);
 
-              typingTimeOutRef.current = setTimeout(() => {             
-                socket.emit("stopTyping", { chatId });
+              typingTimeOutRef.current = setTimeout(() => {
+                socket.emit("stopTyping", {
+                  senderId: authUser._id,
+                  receiverId: selectedUser._id,
+                });
               }, 2000);
             }}
           />

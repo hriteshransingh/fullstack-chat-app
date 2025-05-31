@@ -4,7 +4,16 @@ import { generateToken } from "../lib/utils.js";
 import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const {
+    fullName,
+    email,
+    password,
+    publicKey,
+    encryptedPrivateKey,
+    encryptedSymmetricKey,
+  } = req.body;
+
+
   try {
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -22,18 +31,24 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      fullName: fullName,
-      email: email,
+      fullName,
+      email,
       password: hashedPassword,
+      publicKey,
+      encryptedPrivateKey,
+      encryptedSymmetricKey,
     });
     if (newUser) {
-      generateToken(newUser._id, res);
+      const token = generateToken(newUser._id, res);
       await newUser.save();
       return res.status(201).json({
         _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
         profilePic: newUser.profilePic,
+        publicKey: newUser.publicKey,
+        encryptedPrivateKey: newUser.encryptedPrivateKey,
+        token,
       });
     } else {
       return res.status(404).json({ message: "Invalid user data" });
@@ -49,7 +64,7 @@ export const login = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-    
+
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -65,6 +80,8 @@ export const login = async (req, res) => {
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
+      publicKey: user.publicKey,
+      encryptedPrivateKey: user.encryptedPrivateKey,
     });
   } catch (error) {
     console.log("Error in login controller", error.message);

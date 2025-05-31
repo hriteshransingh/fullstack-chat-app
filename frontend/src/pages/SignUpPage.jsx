@@ -1,9 +1,20 @@
-import React, { useState } from "react";
-import {useAuthStore} from "../store/useAuthStore.js";
-import { MessageSquare, User, Mail,Lock, EyeOff, Eye, Loader2 } from "lucide-react";
-import {Link} from "react-router-dom";
+import { useState } from "react";
+import { useAuthStore } from "../store/useAuthStore.js";
+import sodium from "libsodium-wrappers-sumo";
+import {
+  MessageSquare,
+  User,
+  Mail,
+  Lock,
+  EyeOff,
+  Eye,
+  Loader2,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImagePattern.jsx";
 import toast from "react-hot-toast";
+import { encryptPrivateKey } from "../lib/crypto/encryptPrivateKey.js";
+import { generateKeyPair } from "../lib/crypto/generateKeyPair.js";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,28 +22,56 @@ const SignUpPage = () => {
     fullName: "",
     email: "",
     password: "",
+    publicKey: "",
+    encryptedPrivateKey: "",
   });
 
   const { signup, isSigningUp } = useAuthStore();
 
-
   const validateForm = () => {
-    if(!formData.fullName.trim() ) return toast.error("Full name is required");
-    if(!formData.email.trim() ) return toast.error("Email is required");
-    if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Invalid email format");
-    if(! formData.password) return toast.error("Password is required");
-    if(formData.password.length < 6) return toast.error("Password must be at least 6 characters");
-    return true
+    if (!formData.fullName.trim()) return toast.error("Full name is required");
+    if (!formData.email.trim()) return toast.error("Email is required");
+    if (!/\S+@\S+\.\S+/.test(formData.email))
+      return toast.error("Invalid email format");
+    if (!formData.password) return toast.error("Password is required");
+    if (formData.password.length < 6)
+      return toast.error("Password must be at least 6 characters");
+    return true;
   };
 
-  
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const success = validateForm();
 
-    if (success === true) signup(formData);
+    if (success === true) {
+      try {
+        const keys = await generateKeyPair();
 
+        const publicKey = sodium.to_base64(keys.publicKey);
+        const privateKey = sodium.to_base64(keys.privateKey);
+
+        console.log("checking private key", privateKey);
+
+        const password = formData.password;
+
+        const encryptedPrivateKey = await encryptPrivateKey(
+          privateKey,
+          password
+        );
+        console.log("encrypted", encryptedPrivateKey);
+
+        const updatedForm = {
+          ...formData,
+          publicKey,
+          encryptedPrivateKey,
+        };
+
+        signup(updatedForm);
+      } catch (error) {
+        console.error("Signup process filed:", error);
+      }
+    }
   };
 
   return (
@@ -75,8 +114,6 @@ const SignUpPage = () => {
               </div>
             </div>
 
-
-
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Email</span>
@@ -90,12 +127,12 @@ const SignUpPage = () => {
                   className={`input input-bordered w-full pl-10`}
                   placeholder="you@example.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
               </div>
             </div>
-
-
 
             <div className="form-control">
               <label className="label">
@@ -110,7 +147,9 @@ const SignUpPage = () => {
                   className={`input input-bordered w-full pl-10`}
                   placeholder="••••••••"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                 />
                 <button
                   type="button"
@@ -126,9 +165,11 @@ const SignUpPage = () => {
               </div>
             </div>
 
-
-            
-            <button type="submit" className="btn btn-primary w-full" disabled={isSigningUp}>
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={isSigningUp}
+            >
               {isSigningUp ? (
                 <>
                   <Loader2 className="size-5 animate-spin" />
@@ -138,13 +179,8 @@ const SignUpPage = () => {
                 "Create Account"
               )}
             </button>
-
-            
-
           </form>
 
-
-          
           <div className="text-center">
             <p className="text-base-content/60">
               Already have an account?{" "}
@@ -153,21 +189,13 @@ const SignUpPage = () => {
               </Link>
             </p>
           </div>
-          
-
-
-
         </div>
       </div>
 
-      
       <AuthImagePattern
-      title = "Join our comunity"
-      subtitle = "Connect with friends, share moments and stay in touch with your loved ones"      
+        title="Join our comunity"
+        subtitle="Connect with friends, share moments and stay in touch with your loved ones"
       />
-
-
-
     </div>
   );
 };

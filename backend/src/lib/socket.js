@@ -29,17 +29,19 @@ io.on("connection", (socket) => {
   //io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  socket.on("joinChat", (chatId) => {
-    socket.join(chatId);
-    console.log(`User ${socket.id} joined chat room: ${chatId}`);
+
+  socket.on("typing", ({ senderId, receiverId }) => {
+    const receiverSocketId = userSocketMap[receiverId];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("userTyping", {senderId});
+    }
   });
 
-  socket.on("typing", ({ chatId, user }) => {
-    socket.to(chatId).emit("userTyping", user);
-  });
-
-  socket.on("stopTyping", ({ chatId }) => {
-    socket.to(chatId).emit("userStoppedTyping");
+  socket.on("stopTyping", ({ senderId, receiverId }) => {
+    const receiverSocketId = userSocketMap[receiverId];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("userStoppedTyping", {senderId});
+    }
   });
 
   socket.on("disconnect", () => {
