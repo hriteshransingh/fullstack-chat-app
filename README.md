@@ -66,5 +66,5 @@ npm run build
 
 ## 🚀 Start the App
 ```
-npm start
+npm run start
 ```
