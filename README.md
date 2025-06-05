@@ -1,5 +1,5 @@
 
-# 💬 YoChatt - Real-Time Chat Application  
+# 💬 YoChatt - Real-Time Encrypted Chat Application  
 
 A feature-rich real-time chat app with multiple themes, typing indicators, and responsive design. Built with modern web technologies for seamless communication.
 
@@ -24,7 +24,23 @@ A feature-rich real-time chat app with multiple themes, typing indicators, and r
 - Instant messaging with Socket.io  
 - Real-time online user status tracking  
 - Typing indicators for active conversations  
-- Image uploads and real-time previews  
+- Image uploads and real-time previews
+
+### 🔐 End-to-End Encryption (E2EE)
+
+> Messages are encrypted before they leave the client and decrypted only by the recipient.
+
+- Each conversation uses a **unique symmetric key**  
+- The conversation key is **encrypted with each user's public key**  
+- Messages are encrypted using **XChaCha20-Poly1305**  
+- The conversation key is **decrypted on the client only** using the user's private key  
+- User’s private key is **encrypted with their password** using **Argon2id**  
+- All decrypted keys are securely stored in **IndexedDB**  
+- **Zero-knowledge design** — even the server can’t decrypt your data  
+
+✅ Ensures **complete privacy and forward secrecy** in one-to-one conversations.
+
+
 
 
 ### 🖼️ Media Handling  
