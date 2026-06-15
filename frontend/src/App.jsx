@@ -6,6 +6,7 @@ import SignUpPage from "./pages/SignUpPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import VideoCallPage from "./pages/VideoCallPage.jsx";
 import { useAuthStore } from "./store/useAuthStore.js";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
@@ -32,7 +33,7 @@ const App = () => {
       </div>
     );
 
-     // Paths where Navbar should be hidden
+  // Paths where Navbar should be hidden
   const hideNavbarRoutes = ["/login", "/signup"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
 
@@ -56,6 +57,10 @@ const App = () => {
         <Route
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/video-call/:id"
+          element={authUser ? <VideoCallPage /> : <Navigate to="/login" />}
         />
       </Routes>
       <Toaster />

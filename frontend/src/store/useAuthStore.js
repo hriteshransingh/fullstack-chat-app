@@ -20,6 +20,9 @@ export const useAuthStore = create((set, get) => ({
   isUpdatingProfile: false,
   onlineUsers: [],
   socket: null,
+  incomingCall: null,
+  setIncomingCall: (callData) => set({ incomingCall: callData }),
+
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
@@ -44,7 +47,7 @@ export const useAuthStore = create((set, get) => ({
 
       const decryptedPrivateKey = await decryptPrivateKey(
         authUser.encryptedPrivateKey,
-        data.password
+        data.password,
       );
       await clearAllKeys();
       await storeDecryptedPrivateKey(authUser._id, decryptedPrivateKey);
@@ -68,12 +71,12 @@ export const useAuthStore = create((set, get) => ({
 
       const decryptedPrivateKey = await decryptPrivateKey(
         authUser.encryptedPrivateKey,
-        data.password
+        data.password,
       );
       await clearAllKeys();
       await storeDecryptedPrivateKey(authUser._id, decryptedPrivateKey);
       const { data: conversations } = await axiosInstance.get(
-        `/conversations/user/${authUser._id}`
+        `/conversations/user/${authUser._id}`,
       );
 
       await Promise.all(
@@ -86,20 +89,20 @@ export const useAuthStore = create((set, get) => ({
             const decryptedConversationKey = await decryptConversationKey(
               userEncryptedConversationKey,
               publicKey,
-              decryptedPrivateKey
+              decryptedPrivateKey,
             );
 
             await storeConversationKey(
               conv.conversationId,
-              decryptedConversationKey
+              decryptedConversationKey,
             );
           } catch {
             console.warn(
               `Failed to decrypt/store key for ${conv.conversationId}`,
-              err
+              err,
             );
           }
-        })
+        }),
       );
       get().connectSocket();
     } catch (error) {
@@ -135,6 +138,16 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  deleteAccount: async () => {
+    try {
+      const res = await axiosInstance.delete("/auth/delete-account");
+      set({ authUser: null });
+      toast.success("Account deleted successfully");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
   connectSocket: () => {
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
@@ -148,7 +161,20 @@ export const useAuthStore = create((set, get) => ({
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
     });
+
+
+    socket.on("incomingVideoCall", ({ senderId, callerName }) => {
+         get().setIncomingCall({senderId, callerName});
+         //---added
+       //  socket.emit("callAccepted", {senderId});
+});
+
+    
   },
+
+  
+
+
   disconnectSocket: () => {
     if (get().socket.connected) get().socket.disconnect();
   },

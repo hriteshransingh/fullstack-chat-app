@@ -1,10 +1,30 @@
-import { X } from "lucide-react";
+import { X, VideoIcon } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import { useRef, useEffect, useState } from "react";
+import { axiosInstance } from "../lib/axios.js";
+import useVideoCall from "../hooks/useVideoCall.js";
+import  IncomingCallModal from "../components/IncomingCallModal.jsx";
+
+
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser, isUserTyping } = useChatStore();
-  const { onlineUsers } = useAuthStore();
+  const { selectedUser, setSelectedUser, isUserTyping, sendMessage } =
+    useChatStore();
+  const { onlineUsers, authUser, incomingCall, socket } = useAuthStore();
+
+  const { handleVideoCall, acceptCall, rejectCall, cancelCall} = useVideoCall();
+
+
+  useEffect(()=>{
+    socket.on("callRejected", cancelCall);
+    return ()=>{
+      socket.off("callRejected", cancelCall);
+    }
+  },[socket]);
+  
+
+
 
   return (
     <div className="p-2.5 border-b border-base-300 ">
@@ -34,12 +54,32 @@ const ChatHeader = () => {
             </div>
           </div>
         </div>
+        <div className=" flex items-center gap-3">
+          <button
+            onClick={() => {
+              handleVideoCall();
+            }}
+          >
+            <VideoIcon />
+          </button>
 
-        {/* Close button */}
-        <button onClick={() => setSelectedUser(null)} className="ml-auto">
-          <X />
-        </button>
+          {/* Close button */}
+
+          <button onClick={() => setSelectedUser(null)}>
+            <X />
+          </button>
+        </div>
       </div>
+
+      {/* Incoming video call popup */}
+      <IncomingCallModal
+      incomingCall={incomingCall}
+      selectedUser = {selectedUser}
+      acceptCall = {acceptCall}
+      rejectCall = {rejectCall}
+      />
+
+      
     </div>
   );
 };

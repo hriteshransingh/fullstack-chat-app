@@ -13,7 +13,6 @@ export const signup = async (req, res) => {
     encryptedSymmetricKey,
   } = req.body;
 
-
   try {
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -111,12 +110,30 @@ export const updateProfile = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profilePic: uploadResponse.secure_url },
-      { new: true }
+      { new: true },
     );
 
     return res.status(200).json(updatedUser);
   } catch (error) {
     console.log("Error in update profile:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.cookie("jwt", "", { maxAge: 0 });
+    return res.status(200).json({ message: "Account deleted  successfully" });
+  } catch (error) {
+    console.log("Error in delete account controller", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

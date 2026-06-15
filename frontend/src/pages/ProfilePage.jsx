@@ -1,43 +1,49 @@
-import {useState} from "react";
-import {useAuthStore} from "../store/useAuthStore.js";
-import {Camera, Mail, User} from "lucide-react";
+import { useState, useEffect } from "react";
+import { useAuthStore } from "../store/useAuthStore.js";
+import { Camera, Mail, User } from "lucide-react";
+import useVideoCall from "../hooks/useVideoCall.js";
+import IncomingCallModal from "../components/IncomingCallModal.jsx";
 
 const ProfilePage = () => {
-  const {authUser, isUpdatingProfile, updateProfile} = useAuthStore();
+  const {  acceptCall, rejectCall, cancelCall } = useVideoCall();
+  const { authUser, isUpdatingProfile, updateProfile, deleteAccount , incomingCall, socket } =
+    useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
 
-  
-  const handleImageUpload = async(e) => {
 
+  useEffect(()=>{
+    socket.on("callRejected", cancelCall);
+    return ()=>{
+      socket.off("callRejected",cancelCall);
+    }
+  },[socket]);
+
+
+
+
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if(!file) return;
+    if (!file) return;
 
     const reader = new FileReader();
-    reader.readAsDataURL(file);    
+    reader.readAsDataURL(file);
 
-    reader.onload = async()=> {
+    reader.onload = async () => {
       const base64Image = reader.result;
       setSelectedImg(base64Image);
-      await updateProfile({profilePic: base64Image})
-    }
- 
-  }
-
+      await updateProfile({ profilePic: base64Image });
+    };
+  };
 
   return (
-    <div className= "h-screen pt-20">
+    <div className="h-screen pt-20">
       <div className="max-w-2xl mx-auto p-4 py-8">
         <div className="bg-base-300 rounded-xl p-6 space-y-8">
-
-
-
-          <div className= "text-center">
-            <h1 className="text-2xl font-semibold" >Profile</h1>
+          <div className="text-center">
+            <h1 className="text-2xl font-semibold">Profile</h1>
             <p className="mt-2">Your profile information</p>
           </div>
 
-
-          
           {/* avatar upload section */}
 
           <div className="flex flex-col items-center gap-4">
@@ -47,7 +53,6 @@ const ProfilePage = () => {
                 alt="Profile"
                 className="size-32 rounded-full object-cover border-4 "
               />
-
 
               <label
                 htmlFor="avatar-upload"
@@ -68,15 +73,14 @@ const ProfilePage = () => {
                   onChange={handleImageUpload}
                   disabled={isUpdatingProfile}
                 />
-              </label>             
-
-
+              </label>
             </div>
             <p className="text-sm text-zinc-400">
-              {isUpdatingProfile ? "Uploading..." : "Click the camera icon to update your photo"}
+              {isUpdatingProfile
+                ? "Uploading..."
+                : "Click the camera icon to update your photo"}
             </p>
           </div>
-
 
           <div className="space-y-6">
             <div className="space-y-1.5">
@@ -84,7 +88,9 @@ const ProfilePage = () => {
                 <User className="w-4 h-4" />
                 Full Name
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.fullName}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
+                {authUser?.fullName}
+              </p>
             </div>
 
             <div className="space-y-1.5">
@@ -92,10 +98,11 @@ const ProfilePage = () => {
                 <Mail className="w-4 h-4" />
                 Email Address
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.email}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
+                {authUser?.email}
+              </p>
             </div>
           </div>
-
 
           <div className="mt-6 bg-base-300 rounded-xl p-6">
             <h2 className="text-lg font-medium  mb-4">Account Information</h2>
@@ -112,12 +119,36 @@ const ProfilePage = () => {
             </div>
           </div>
 
+          {/* Delete Account section from here */}
+          <div className="mt-6 bg-base-300 rounded-xl p-6 border border-red-500 ">
+            <h2 className="text-lg font-medium text-red-500">Delete Account</h2>
+            <p className="text-sm text-zinc-400 mt-2">
+              Delete your account paermanently. This action cannot be undone.
+            </p>
+            <button
+              className="btn bg-zinc-900 mt-5 rounded-xl text-white"
+              onClick={() => {
+                const confirmDelete = window.confirm(
+                  "Are you sure you want to delete your account?",
+                );
 
+                if (confirmDelete) {
+                  deleteAccount();
+                }
+              }}
+            >
+              Delete Account
+            </button>
+          </div>
 
-
-
+          {/* to here  */}
         </div>
       </div>
+      <IncomingCallModal
+        incomingCall={incomingCall}
+        acceptCall={acceptCall}
+        rejectCall={rejectCall}
+      />
     </div>
   );
 };

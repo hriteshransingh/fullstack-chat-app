@@ -1,7 +1,20 @@
-
 import { MessageSquare } from "lucide-react";
+import useVideoCall from "../hooks/useVideoCall.js";
+import IncomingCallModal from "../components/IncomingCallModal.jsx";
+import { useAuthStore } from "../store/useAuthStore.js";
+import { useEffect } from "react";
 
 const NoChatSelected = () => {
+  const { acceptCall, rejectCall, cancelCall } = useVideoCall();
+  const { incomingCall, socket } = useAuthStore();
+
+  useEffect(() => {
+    socket.on("callRejected", cancelCall);
+    return () => {
+      socket.off("callRejected", cancelCall);
+    }
+  }, [socket]);
+
   return (
     <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100/50">
       <div className="max-w-md text-center space-y-6">
@@ -18,11 +31,17 @@ const NoChatSelected = () => {
         </div>
 
         {/* Welcome Text */}
-        <h2 className="text-2xl font-bold">Welcome to YoChatt!</h2>
+        <h2 className="text-2xl font-bold">Welcome to Convo!</h2>
         <p className="text-base-content/60">
           Select a conversation from the sidebar to start chatting
         </p>
       </div>
+      {/* Incoming video call popup */}
+      <IncomingCallModal
+        incomingCall={incomingCall}
+        acceptCall={acceptCall}
+        rejectCall={rejectCall}
+      />
     </div>
   );
 };

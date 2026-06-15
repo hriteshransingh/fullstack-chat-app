@@ -188,7 +188,7 @@ export const useChatStore = create((set, get) => ({
         ...res.data,
         text: messageData.text,
         isEncrypted: false,
-      };
+      }; 
 
       set((state) => ({ messages: [...state.messages, newMessage] }));
     } catch (error) {

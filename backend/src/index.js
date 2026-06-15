@@ -8,6 +8,11 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
 import {app, server} from "./lib/socket.js";
+import dns from "dns";
+
+ dotenv.config();
+
+dns.setServers(["1.1.1.1","8.8.8.8"]);
 
  dotenv.config();
 

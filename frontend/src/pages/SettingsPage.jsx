@@ -1,21 +1,41 @@
 import { THEMES } from "../constants";
 import { useThemeStore } from "../store/useThemeStore";
 import { Send } from "lucide-react";
+import useVideoCall from "../hooks/useVideoCall.js";
+import IncomingCallModal from "../components/IncomingCallModal.jsx";
+import { useAuthStore } from "../store/useAuthStore.js";
+import {useEffect} from "react";
 
 const PREVIEW_MESSAGES = [
   { id: 1, content: "Hey! How's it going?", isSent: false },
-  { id: 2, content: "I'm doing great! Just working on some new features.", isSent: true },
+  {
+    id: 2,
+    content: "I'm doing great! Just working on some new features.",
+    isSent: true,
+  },
 ];
 
 const SettingsPage = () => {
+  const {  acceptCall, rejectCall, cancelCall } = useVideoCall();
+  const { incomingCall, socket } = useAuthStore();
+
   const { theme, setTheme } = useThemeStore();
+
+  useEffect(()=>{
+      socket.on("callRejected", cancelCall);
+      return ()=>{
+        socket.off("callRejected", cancelCall);
+      }
+  },[socket]);
 
   return (
     <div className="h-screen container mx-auto px-4 pt-20 max-w-5xl">
       <div className="space-y-6">
         <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold">Theme</h2>
-          <p className="text-sm text-base-content/70">Choose a theme for your chat interface</p>
+          <p className="text-sm text-base-content/70">
+            Choose a theme for your chat interface
+          </p>
         </div>
 
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
@@ -28,7 +48,10 @@ const SettingsPage = () => {
               `}
               onClick={() => setTheme(t)}
             >
-              <div className="relative h-8 w-full rounded-md overflow-hidden" data-theme={t}>
+              <div
+                className="relative h-8 w-full rounded-md overflow-hidden"
+                data-theme={t}
+              >
                 <div className="absolute inset-0 grid grid-cols-4 gap-px p-1">
                   <div className="rounded bg-primary"></div>
                   <div className="rounded bg-secondary"></div>
@@ -110,6 +133,11 @@ const SettingsPage = () => {
           </div>
         </div>
       </div>
+      <IncomingCallModal
+        incomingCall={incomingCall}
+        acceptCall={acceptCall}
+        rejectCall={rejectCall}
+      />
     </div>
   );
 };
