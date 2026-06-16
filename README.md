@@ -1,4 +1,4 @@
-# 💬 YoChatt - Real-Time Encrypted Chat Application  
+# 💬 Convo - Real-Time Encrypted Chat Application  
 
 A feature-rich real-time chat app with multiple themes, typing indicators, video calling, and responsive design. Built with modern web technologies for seamless communication.
 
