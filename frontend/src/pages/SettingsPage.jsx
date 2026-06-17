@@ -22,6 +22,7 @@ const SettingsPage = () => {
   const { theme, setTheme } = useThemeStore();
 
   useEffect(()=>{
+      if (!socket) return;
       socket.on("callRejected", cancelCall);
       return ()=>{
         socket.off("callRejected", cancelCall);

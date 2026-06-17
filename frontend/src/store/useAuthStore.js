@@ -176,6 +176,12 @@ export const useAuthStore = create((set, get) => ({
 
 
   disconnectSocket: () => {
-    if (get().socket.connected) get().socket.disconnect();
+    const socket = get().socket;
+    if (socket) {
+      socket.off("getOnlineUsers");
+      socket.off("incomingVideoCall");
+      if (socket.connected) socket.disconnect();
+      set({ socket: null });
+    }
   },
 }));

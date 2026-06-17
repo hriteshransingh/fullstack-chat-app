@@ -9,6 +9,7 @@ const NoChatSelected = () => {
   const { incomingCall, socket } = useAuthStore();
 
   useEffect(() => {
+    if (!socket) return;
     socket.on("callRejected", cancelCall);
     return () => {
       socket.off("callRejected", cancelCall);

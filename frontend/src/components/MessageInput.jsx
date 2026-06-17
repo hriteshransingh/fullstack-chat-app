@@ -14,12 +14,11 @@ const MessageInput = () => {
     setUserTyping,
     setUserStoppedTyping,
   } = useChatStore();
-  const { authUser } = useAuthStore();
+  const { authUser, socket } = useAuthStore();
   const typingTimeOutRef = useRef(null);
 
-  const socket = useAuthStore.getState().socket;
-
   useEffect(() => {
+    if (!socket) return;
     socket.on("userTyping", ({ senderId }) => {
       setUserTyping(senderId);
     });
@@ -105,7 +104,7 @@ const MessageInput = () => {
             onChange={(e) => {
               setText(e.target.value);
 
-              if (!authUser || !selectedUser) return;
+              if (!authUser || !selectedUser || !socket) return;
 
               socket.emit("typing", {
                 senderId: authUser._id,
