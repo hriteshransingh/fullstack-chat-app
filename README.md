@@ -1,7 +1,6 @@
+# 💬 Convo - Real-Time Encrypted Chat Application  
 
-# 💬 YoChatt - Real-Time Encrypted Chat Application  
-
-A feature-rich real-time chat app with multiple themes, typing indicators, and responsive design. Built with modern web technologies for seamless communication.
+A feature-rich real-time chat app with multiple themes, typing indicators, video calling, and responsive design. Built with modern web technologies for seamless communication.
 
 ## 🚀 Tech Stack & Features
 
@@ -12,6 +11,7 @@ A feature-rich real-time chat app with multiple themes, typing indicators, and r
   - React  
   - Node.js  
 - **Socket.io** for real-time communication  
+- **WebRTC** for peer-to-peer video calling
 - **TailwindCSS + DaisyUI** for modern UI  
 - **Zustand** for lightweight and efficient global state management  
 
@@ -25,6 +25,18 @@ A feature-rich real-time chat app with multiple themes, typing indicators, and r
 - Real-time online user status tracking  
 - Typing indicators for active conversations  
 - Image uploads and real-time previews
+
+### 📹 Video Calling Features
+- One-on-one video calls with WebRTC
+- Real-time signaling via Socket.io
+- ICE candidate exchange with STUN/TURN servers
+- Mute/Unmute microphone during calls
+- Video on/off toggle during calls
+- Incoming call notification with ringtone
+- Call duration tracking
+- Call rejection and missed call handling
+- Picture-in-picture self-view
+- Auto-reconnect on connection drop
 
 ### 🔐 End-to-End Encryption (E2EE)
 
@@ -40,15 +52,14 @@ A feature-rich real-time chat app with multiple themes, typing indicators, and r
 
 ✅ Ensures **complete privacy and forward secrecy** in one-to-one conversations.
 
-
-
+> **Note:** Video/audio streams use WebRTC's built-in SRTP encryption (DTLS-SRTP) which is secure by default.
 
 ### 🖼️ Media Handling  
 - Cloudinary integration for secure image storage  
 - Real-time photo sharing with preview  
 - Optimized media loading  
 
-###   Error Handling  
+### ⚡ Error Handling  
 - Comprehensive error handling on server and client  
 - User-friendly validation and feedback  
 
