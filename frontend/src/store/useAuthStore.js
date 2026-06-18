@@ -162,18 +162,10 @@ export const useAuthStore = create((set, get) => ({
       set({ onlineUsers: userIds });
     });
 
-
     socket.on("incomingVideoCall", ({ senderId, callerName }) => {
-         get().setIncomingCall({senderId, callerName});
-         //---added
-       //  socket.emit("callAccepted", {senderId});
-});
-
-    
+      get().setIncomingCall({ senderId, callerName });
+    });
   },
-
-  
-
 
   disconnectSocket: () => {
     const socket = get().socket;

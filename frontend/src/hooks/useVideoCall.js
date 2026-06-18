@@ -6,7 +6,8 @@ import { useChatStore } from "../store/useChatStore";
 import { WebSocket } from "socket.io-client";
 
 const useVideoCall = () => {
-  const { socket, authUser, incomingCall, setIncomingCall } = useAuthStore();
+  const { socket, authUser, incomingCall, setIncomingCall, onlineUsers } =
+    useAuthStore();
 
   const { selectedUser } = useChatStore();
 
@@ -18,6 +19,10 @@ const useVideoCall = () => {
 
   // Start video call
   const handleVideoCall = () => {
+    if (!onlineUsers.includes(selectedUser._id)) {
+      toast.error("Can't call, user is offline");
+      return;
+    }
     try {
       navigate(`/video-call/${selectedUser._id}`);
       setTimeout(() => {
