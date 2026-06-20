@@ -1,25 +1,27 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore.js";
-import {useAuthStore} from "../store/useAuthStore.js";
+import { useAuthStore } from "../store/useAuthStore.js";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton.jsx";
-import {Users} from "lucide-react";
+import { Users } from "lucide-react";
 
 const SideBar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUserLoading } =
     useChatStore();
-    
-  const {onlineUsers} = useAuthStore();
+
+  const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
     getUsers();
   }, [getUsers]);
 
-  useEffect(()=> {
+  useEffect(() => {
     console.log("Online users:", onlineUsers);
-  },[onlineUsers]);
+  }, [onlineUsers]);
 
-  const filteredUsers = showOnlineOnly ? users.filter(user => onlineUsers.includes(user._id)) : users;
+  const filteredUsers = showOnlineOnly
+    ? users.filter((user) => onlineUsers.includes(user._id))
+    : users;
 
   if (isUserLoading) return <SidebarSkeleton />;
 
@@ -43,13 +45,17 @@ const SideBar = () => {
             />
             <span className="text-sm">Show online only</span>
           </label>
-          <span className="text-xs text-zinc-500">({onlineUsers.length - 1} online)</span>
+          <span className="text-xs text-zinc-500">
+            (
+            {onlineUsers.length > 0
+              ? onlineUsers.length - 1
+              : onlineUsers.length}{" "}
+            online)
+          </span>
         </div>
-        
-
       </div>
       <div className="overflow-y-auto w-full py-3">
-      {filteredUsers.map((user) => (
+        {filteredUsers.map((user) => (
           <button
             key={user._id}
             onClick={() => setSelectedUser(user)}
@@ -83,10 +89,9 @@ const SideBar = () => {
           </button>
         ))}
 
-        {filteredUsers.length === 0 &&(
+        {filteredUsers.length === 0 && (
           <div className="text-center text-zinc-500 py-4">No online users</div>
         )}
-
       </div>
     </aside>
   );
